@@ -97,27 +97,34 @@ function checkCrash(x,top,bot){
 }
 
 
-function drawBird(xPos,yPos,r, flap){
+function drawBird(xPos,yPos,r, yVel){
+	var angle = map(yVel,-10,10,PI/6,-PI/6);
 fill(255,255,0);
 stroke(255,255,0);
-triangle(xPos,yPos+r/2,xPos,yPos-r/2,xPos+r*1.5,yPos);
+push();
+translate(xPos,yPos);
+rotate(angle);
+triangle(0,r/2,0,-r/2,r*1.5,0);
 fill(255,0,0);
 stroke(255,0,0);
-	ellipse(xPos,yPos,r*2);
-	fill(0);
-	stroke(0);
-		ellipse(xPos+r/3,yPos-r/3,r/4);
-		var wingY;
-		if(flap){
-			wingY = yPos-r/2;
-		}else{
-			wingY = yPos+r/2
-		}
-		line(xPos-r/4,yPos,xPos-r/5,wingY);
-		line(xPos+r/2,yPos,xPos-r/5,wingY);
+ellipse(0,0,2*r);
+fill(0);
+stroke(0);
+ellipse(r/3,-r/3,r/4);
+var wingY;
+if(yVel < 1){
+	wingY = -r/2;
+}else{
+	wingY = +r/2
+}
+line(-r/4,0,-r/5,wingY);
+line(+r/2,0,-r/5,wingY);
+pop();
 }
 
 function drawGate(xPos,top,bot){
+	fill(0);
+	stroke(0);
 	line(xPos,0,xPos,top);
 	line(xPos,bot,xPos,HEIGHT);
 }
@@ -129,12 +136,10 @@ class Bird{
 		this.r = r;
 		this.yVel = 0;
 		this.g = -0.4;
-		this.flap = false;
 	}
 
 	tapped(){
 		this.yVel = 8;
-		this.flap = true;
 	}
 
 	move(){
@@ -143,12 +148,9 @@ class Bird{
 		if(this.y <= this.r){
 			this.yVel = 0;
 		}
-		if(this.yVel < 1){
-			this.flap = false;
-		}
 	}
 	draw(){
-		drawBird(this.x,HEIGHT-this.y,this.r, this.flap);
+		drawBird(this.x,HEIGHT-this.y,this.r, this.yVel);
 	}
 }
 
